@@ -1,0 +1,12 @@
+name: whack-a-test
+
+tests:
+  spec:
+    main: Spec.hs
+    dependencies:
+      - base
+      - hspec
+      - shake
+      - silently
+    source-dirs:
+      - tests
