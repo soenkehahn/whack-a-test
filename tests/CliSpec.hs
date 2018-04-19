@@ -15,3 +15,8 @@ spec = around_ (hSilence [stdout, stderr]) $ do
       Stderr (output :: String) <- cmd "./dist/whack-a-test --help"
       output `shouldContain`
         "whack-a-test -- a game that Jon and Sönke are playing"
+  describe "addition" $ do
+    it "can add two numbers" $ do
+      unit $ cmd "./compile.sh"
+      Stdout (output :: String) <- cmd "./dist/whack-a-test --add 1 2"
+      output `shouldContain` "1 + 2 = 3"
