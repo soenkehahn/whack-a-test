@@ -22,9 +22,16 @@ spec = around_ (hSilence [stdout, stderr]) $ do
     it "can add two numbers" $ do
       unit $ cmd "./compile.sh"
       Stdout (output :: String) <- cmd "./dist/whack-a-test --add 1 2"
-      output `shouldContain` "1 + 2 = 3"
+      output `shouldContain` (addOutput 1 2)
     it "can add two arbitrary numbers" $ do
       property $ \ (x :: Int) (y :: Int) -> do
         Stdout (output :: String) <-
           cmd "./dist/whack-a-test --add" (show x) (show y)
-        output `shouldContain` [i|#{x} + #{y} = #{x + y}|]
+        output `shouldContain` (addOutput x y)
+    it "can add pairs of numbers from stdin" $ do
+      property $ \ (x :: Int) (y :: Int) -> do
+        Stdout (output :: String) <-
+          cmd (Stdin [i|#{x} #{y}|]) "./dist/whack-a-test --add"
+        output `shouldContain` (addOutput x y)
+  where
+    addOutput x y = [i|#{x} + #{y} = #{x + y}|]
