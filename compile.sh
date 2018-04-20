@@ -8,3 +8,4 @@ chmod +x ./dist/whack-a-test
 exit 0
 #!/usr/bin/env bash
 echo "whack-a-test -- a game that Jon and Sönke are playing" >&2
+echo "1 + 2 = 3"
