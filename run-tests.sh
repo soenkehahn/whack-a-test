@@ -3,4 +3,5 @@
 set -eux
 
 stack setup
-stack test
+stack test --only-dependencies
+stack exec -- runhaskell -itests tests/Spec.hs
