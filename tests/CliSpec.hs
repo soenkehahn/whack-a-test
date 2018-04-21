@@ -7,18 +7,26 @@ import Data.String.Interpolate
 import Development.Shake
 import System.IO
 import System.IO.Silently (hSilence)
+import System.Timeout
 import Test.Hspec
 import Test.QuickCheck
 
 silence :: Spec -> Spec
-silence = around_ (hSilence [stdout, stderr])
+silence = id -- around_ (hSilence [stdout, stderr])
 
 compileBeforeAll :: Spec -> Spec
 compileBeforeAll = beforeAll_ $ do
   unit $ cmd "./compile.sh"
 
+shouldTerminate :: Spec -> Spec
+shouldTerminate = around_ $ \ test -> do
+  result <- timeout 500000 test
+  case result of
+    Just () -> return ()
+    Nothing -> fail "timeout"
+
 spec :: Spec
-spec = compileBeforeAll $ silence $ do
+spec = compileBeforeAll $ silence $ shouldTerminate $ do
   describe "whack-a-test executable" $ do
     it "has a nice help message" $ do
       Stderr (output :: String) <- cmd "./dist/whack-a-test --help"
