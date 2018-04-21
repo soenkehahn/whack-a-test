@@ -46,5 +46,7 @@ spec = compileBeforeAll $ silence $ shouldTerminate $ do
         Stdout (output :: String) <-
           cmd (Stdin [i|#{x} #{y}|]) "./dist/whack-a-test --add"
         output `shouldContain` (addOutput x y)
+    it "terminates when not given numbers" $ do
+      cmd "./dist/whack-a-test --add" :: IO ()
   where
     addOutput x y = [i|#{x} + #{y} = #{x + y}|]
