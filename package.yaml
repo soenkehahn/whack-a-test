@@ -7,7 +7,6 @@ tests:
       - base
       - hspec
       - shake
-      - silently
       - interpolate
       - QuickCheck
     source-dirs:
