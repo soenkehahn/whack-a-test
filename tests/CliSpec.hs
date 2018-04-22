@@ -6,13 +6,9 @@ module CliSpec where
 import Data.String.Interpolate
 import Development.Shake
 import System.IO
-import System.IO.Silently (hSilence)
 import System.Timeout
 import Test.Hspec
 import Test.QuickCheck
-
-silence :: Spec -> Spec
-silence = id -- around_ (hSilence [stdout, stderr])
 
 compileBeforeAll :: Spec -> Spec
 compileBeforeAll = beforeAll_ $ do
@@ -26,7 +22,7 @@ shouldTerminate = around_ $ \ test -> do
     Nothing -> fail "timeout"
 
 spec :: Spec
-spec = compileBeforeAll $ silence $ shouldTerminate $ do
+spec = compileBeforeAll $ shouldTerminate $ do
   describe "whack-a-test executable" $ do
     it "has a nice help message" $ do
       Stderr (output :: String) <- cmd "./dist/whack-a-test --help"
@@ -46,7 +42,10 @@ spec = compileBeforeAll $ silence $ shouldTerminate $ do
         Stdout (output :: String) <-
           cmd (Stdin [i|#{x} #{y}|]) "./dist/whack-a-test --add"
         output `shouldContain` (addOutput x y)
-    it "terminates when not given numbers" $ do
-      cmd "./dist/whack-a-test --add" :: IO ()
+    it "gives a helpful message when not given numbers (and not closing stdin)" $ do
+      Stderr message <- cmd "./dist/whack-a-test --add"
+      message `shouldBe`
+        ("whack-a-test: please provide addition arguments, " ++
+        "either through command line arguments or to stdin")
   where
     addOutput x y = [i|#{x} + #{y} = #{x + y}|]
