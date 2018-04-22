@@ -48,6 +48,10 @@ spec = compileBeforeAll $ shouldTerminate $ do
       trim message `shouldBe`
         ("whack-a-test: please provide addition arguments, " ++
         "either through command line arguments or to stdin")
+    it "shouldn't care if there's a newline in stdin" $ do
+      property $ \ (x :: Int) (y :: Int) -> do
+        Stdout output <- cmd (Stdin [i|#{x} #{y}\n|]) "./dist/whack-a-test --add"
+        trim output `shouldBe` addOutput x y
   where
     addOutput x y = [i|#{x} + #{y} = #{x + y}|]
     trim = reverse . dropWhile isSpace . reverse . dropWhile isSpace
