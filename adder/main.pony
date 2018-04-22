@@ -9,7 +9,7 @@ class iso Handler is StdinNotify
   let env: Env
   var arr: String val = ""
   let _timers: Timers = Timers
-  let _timer: (Timer tag | None)
+  var _timer: (Timer tag | None)
 
   new iso create(env': Env) =>
     env = env'
@@ -25,8 +25,14 @@ class iso Handler is StdinNotify
     _timers(consume timer)
 
   fun ref apply(data: Array[U8 val] iso) =>
-    try _timers.cancel(_timer as Timer tag) end
+    _cancel_timer()
     arr = arr + String.from_iso_array(consume data)
+
+  fun ref _cancel_timer() =>
+    try
+      _timers.cancel(_timer as Timer tag)
+      _timer = None
+    end
 
   fun dispose() =>
     try
