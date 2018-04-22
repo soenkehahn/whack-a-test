@@ -30,6 +30,5 @@ case "$1" in
         exec "$(dirname $0)/adder" "$@"
         ;;
     *)
-        break
         ;;
 esac
